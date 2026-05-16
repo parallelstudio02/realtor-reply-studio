@@ -271,10 +271,36 @@ function buildReply() {
   return sanitizeReply(lines.join("\n\n"));
 }
 
-function generateReply() {
-  el("generatedReply").value = buildReply();
-  if (el("replyLength").value === "email") {
-    el("emailSubject").value = buildSubject();
+async function generateReply() {
+  const generateButton = el("generateReply");
+  generateButton.disabled = true;
+  generateButton.textContent = "Generating...";
+
+  try {
+    const response = await fetch("/api/generate-reply", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        clientMessage: el("clientMessage").value.trim(),
+        replyGist: el("myDraft").value.trim(),
+        tone: selectedTone,
+        format: el("replyLength").value
+      })
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Unable to generate reply");
+
+    el("generatedReply").value = sanitizeReply(data.reply || "");
+    if (el("replyLength").value === "email") {
+      el("emailSubject").value = data.subject || buildSubject();
+    }
+  } catch (error) {
+    el("generatedReply").value = buildReply();
+    toast("AI unavailable. Used offline draft.");
+  } finally {
+    generateButton.disabled = false;
+    generateButton.textContent = "Generate Reply";
   }
 }
 
