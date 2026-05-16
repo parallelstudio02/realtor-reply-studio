@@ -123,6 +123,19 @@ function cleanInput(text) {
 
 function polishGist(text) {
   return cleanInput(text)
+    .replace(/\bthank them\b/gi, "thank you for the update")
+    .replace(/\bask her\b/gi, "check with her")
+    .replace(/\bask him\b/gi, "check with him")
+    .replace(/\bask them\b/gi, "check with them")
+    .replace(/\bseller move out still aligned to agreed timeline\b/gi, "the seller move out date is still aligned to the agreed timeline")
+    .replace(/\bseller timeline still same\b/gi, "the seller timeline remains unchanged for now")
+    .replace(/\bwill update immediately if can vacate earlier\b/gi, "we will update you immediately if they are able to vacate earlier")
+    .replace(/\bif can handover earlier\b/gi, "if an earlier handover becomes possible")
+    .replace(/\bcoordinate both side\b/gi, "coordinate closely with both sides")
+    .replace(/\bcoordinate both sides\b/gi, "coordinate closely with both sides")
+    .replace(/\bprorate adjustments\b/gi, "pro rating adjustments")
+    .replace(/\bpro-rate adjustments\b/gi, "pro rating adjustments")
+    .replace(/\bproperty tax\b/gi, "property tax")
     .replace(/\bwe should not rely on\b/gi, "it is better not to rely on")
     .replace(/\bshould not rely on\b/gi, "it is better not to rely on")
     .replace(/\bwe should check\b/gi, "we can check")
@@ -296,8 +309,12 @@ async function generateReply() {
       el("emailSubject").value = data.subject || buildSubject();
     }
   } catch (error) {
-    el("generatedReply").value = buildReply();
-    toast("AI unavailable. Used offline draft.");
+    el("generatedReply").value = [
+      "AI reply is not available in this preview.",
+      "",
+      "Please test the deployed Vercel website after uploading the latest files and redeploying. The local 127.0.0.1 preview cannot run the Vercel serverless OpenAI function."
+    ].join("\n");
+    toast("AI unavailable in local preview.");
   } finally {
     generateButton.disabled = false;
     generateButton.textContent = "Generate Reply";

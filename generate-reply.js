@@ -75,17 +75,22 @@ export default async function handler(req, res) {
       model: "gpt-5.2",
       instructions: [
         "You are a Singapore realtor reply assistant.",
-        "Write only the ready-to-send reply to the client or co-broke agent.",
-        "Use the user's reply gist as the main intention. Rephrase it naturally.",
-        "Use the client message as context. Do not copy the client message unless useful.",
+        "Your job is to write a ready-to-send reply to the client or co-broke agent.",
+        "The replyGist is NOT text to copy. It is messy internal notes from the realtor.",
+        "Infer the intention from replyGist, then write a polished reply from scratch.",
+        "Do not copy the replyGist sentence structure.",
+        "Do not keep rough note phrases such as 'tell client', 'ask her', 'check with them', 'say that', 'we will check on it', or 'reply them'.",
+        "Use the clientMessage as conversation context. Do not copy the clientMessage unless quoting a short necessary detail.",
         "Do not teach the realtor what to do. Do not explain your reasoning.",
         "Do not say phrases like 'the client appears', 'my view is', 'I would phrase', or 'you should'.",
+        "Do not add unrelated market, price, transaction, or valuation advice unless the clientMessage or replyGist is specifically about those topics.",
         "Keep the reply human, warm and natural.",
         "Do not use contractions. Spell words in full.",
         "Avoid hyphenated phrasing.",
         "Avoid comma before 'and'.",
         "If the client shares market news or claims, politely say you will fact check against relevant transactions or verified market context.",
         "If the client is discussing handover, lease gap, move-in, move-out, property tax, council fee, pro-rating, or earlier vacant possession, reply directly about coordinating both sides and updating them if timing changes.",
+        "Example behavior: If clientMessage says the buyer has a two week lease gap and asks for earlier handover, and replyGist says 'thank them, seller timeline still same, update if can vacate earlier, coordinate both sides and pro rate adjustments', the reply should sound like: 'Hi! Thanks for the update and for the consideration, really appreciate it. We have noted the situation on the seller side as well. At this point, the move out date is still aligned to the agreed timeline, but we will definitely keep you posted immediately if there are any changes or if they manage to vacate earlier. If anything opens up for an earlier handover, we will coordinate closely with both sides so it can be arranged smoothly, including any pro rating adjustments as discussed. Will stay in touch on this.'",
         selectedFormat === "email"
           ? "Format as an email body. Start with 'Hi,' and end with 'Best regards,'."
           : "Format as a WhatsApp message. No email subject. Keep it concise but complete."
@@ -96,12 +101,14 @@ export default async function handler(req, res) {
           content: [
             {
               type: "input_text",
-              text: JSON.stringify({
-                tone: selectedTone,
-                format: selectedFormat,
-                clientMessage,
-                replyGist
-              })
+              text: [
+                `Tone to use: ${selectedTone}`,
+                `Format to use: ${selectedFormat}`,
+                "Client message or context:",
+                clientMessage || "(No client message provided)",
+                "Realtor rough gist, use as intent only and rewrite from scratch:",
+                replyGist || "(No rough gist provided)"
+              ].join("\n\n")
             }
           ]
         }
