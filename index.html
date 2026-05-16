@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Realtor Reply Studio</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Realtor Reply Studio</p>
+          <h1>Simple client reply writer</h1>
+        </div>
+        <button class="ghost-button" id="clearAll" type="button">Clear</button>
+      </section>
+
+      <section class="app-card" aria-label="Realtor reply writer">
+        <div class="input-grid">
+          <div class="field">
+            <label for="clientMessage">Client reply or comment</label>
+            <textarea id="clientMessage" placeholder="Paste the client message here. You can also paste any news article or market comment from the client in this same box."></textarea>
+          </div>
+
+          <div class="field">
+            <label for="myDraft">My reply to them</label>
+            <textarea id="myDraft" placeholder="Optional. Type your rough reply here and the app will make it more natural."></textarea>
+          </div>
+        </div>
+
+        <div class="simple-controls">
+          <div>
+            <label>Tone</label>
+            <div class="tone-grid" role="radiogroup" aria-label="Tone options">
+              <button class="tone-chip active" type="button" data-tone="friendly">Friendly</button>
+              <button class="tone-chip" type="button" data-tone="casual">Casual</button>
+              <button class="tone-chip" type="button" data-tone="professional">Professional</button>
+              <button class="tone-chip" type="button" data-tone="analytical">Analytical</button>
+              <button class="tone-chip" type="button" data-tone="education">Education</button>
+              <button class="tone-chip" type="button" data-tone="negotiation">Negotiation</button>
+              <button class="tone-chip" type="button" data-tone="followUp">Follow up</button>
+              <button class="tone-chip" type="button" data-tone="reassuring">Reassuring</button>
+              <button class="tone-chip" type="button" data-tone="concise">Concise</button>
+              <button class="tone-chip" type="button" data-tone="objection">Objection handling</button>
+              <button class="tone-chip" type="button" data-tone="seller">Seller update</button>
+              <button class="tone-chip" type="button" data-tone="passiveAggressive">Passive aggressive</button>
+            </div>
+          </div>
+
+          <div>
+            <label for="replyLength">Format</label>
+            <select id="replyLength">
+              <option value="whatsapp">WhatsApp</option>
+              <option value="email">Email</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="main-actions">
+          <button class="primary-button" id="generateReply" type="button">Generate Reply</button>
+          <button class="ghost-button" id="copyReply" type="button">Copy All</button>
+        </div>
+
+        <div class="field subject-field" id="subjectField" hidden>
+          <label for="emailSubject">Email subject</label>
+          <input id="emailSubject" type="text" placeholder="Email subject will appear here." />
+        </div>
+
+        <div class="field output-field">
+          <label for="generatedReply">Realtor reply</label>
+          <textarea id="generatedReply" placeholder="Your reply will appear here. You can select any sentence directly from this box, edit it, then copy."></textarea>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
