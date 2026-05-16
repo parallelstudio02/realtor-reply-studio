@@ -154,6 +154,10 @@ function hasViewingFollowUp(text) {
   return /(viewing|viewed|visit|appointment|see the unit|after viewing)/i.test(text);
 }
 
+function hasEarlyHandover(text) {
+  return /(move out|move in|earlier|handover|vacate|lease|property tax|council fee|pro.?rat|waive|gap)/i.test(text);
+}
+
 function makeGistMessage(gist) {
   const clean = polishGist(gist);
   if (!clean) return "";
@@ -163,6 +167,9 @@ function makeGistMessage(gist) {
 
 function makeContextLine(client, draft) {
   const combined = `${client} ${draft}`;
+  if (hasEarlyHandover(combined)) {
+    return "We have noted the timing on both sides. At this point, the handover is still aligned to the agreed timeline, but we will update you immediately if there is any possibility of an earlier arrangement.";
+  }
   if (hasMarketOrNews(combined)) {
     return "I do not want to rely on the headline alone, so I will fact check it against the latest relevant transactions and market context before advising you.";
   }
@@ -175,7 +182,24 @@ function makeContextLine(client, draft) {
   return "";
 }
 
+function buildEarlyHandoverReply(tone, client, draft, isEmail) {
+  const lines = [
+    isEmail ? "Hi," : "Hi!",
+    "Thanks for the update and for the consideration, really appreciate it.",
+    "We have noted the situation on the seller side as well. At this point, the move out date is still aligned to the agreed timeline, but we will definitely keep you posted immediately if there are any changes or if they are able to vacate earlier.",
+    "If anything opens up for an earlier handover, we will coordinate closely with both sides so it can be arranged smoothly, including any pro rating adjustments as discussed.",
+    tone === tones.followUp ? "Will stay in touch on this." : "We will keep you updated on this.",
+    isEmail ? "Best regards," : ""
+  ];
+
+  return lines.filter(Boolean);
+}
+
 function buildWhatsappReply(tone, client, draft) {
+  if (hasEarlyHandover(`${client} ${draft}`)) {
+    return buildEarlyHandoverReply(tone, client, draft, false);
+  }
+
   const gistMessage = makeGistMessage(draft);
   const contextLine = makeContextLine(client, draft);
 
@@ -191,6 +215,10 @@ function buildWhatsappReply(tone, client, draft) {
 }
 
 function buildEmailReply(tone, client, draft) {
+  if (hasEarlyHandover(`${client} ${draft}`)) {
+    return buildEarlyHandoverReply(tone, client, draft, true);
+  }
+
   const gistMessage = makeGistMessage(draft);
   const contextLine = makeContextLine(client, draft);
 
